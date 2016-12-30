@@ -3,6 +3,8 @@
 	$pfadtemplates="templates/";
 	$pfadJS="js/";
 	$pfadphp="php/";
+	
+	//---------
 	$loginstatustext="";
 	
 	//--const--
