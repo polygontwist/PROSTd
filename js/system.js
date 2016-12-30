@@ -1014,6 +1014,7 @@ console.log("MESSAGE",s,data);
 			
 			var monatstage=[];
 			var tage;
+			//Anzahl der Tage im Monat ermitteln für canvas-width
 			for(i=0;i<zeigemonate;i++){
 				dathelper.setMonth(Zeitjetzt.getMonth()-zeigemonate+i);
 				//tage=getMonatstage(Zeitjetzt.getMonth(),Zeitjetzt.getFullYear());
@@ -1022,6 +1023,7 @@ console.log("MESSAGE",s,data);
 console.log(">>",dathelper);
 				zeigetage+=tage;
 			}
+console.log(">>",monatstage);
 			
 			
 			
@@ -1036,8 +1038,13 @@ console.log(">>",dathelper);
 			
 			//Monatstrenner
 			var mondat=new Date();
+			mondat.setMilliseconds(1);
+			mondat.setHours(12);		//default 12, falls Zeitverschiebung...	
+			mondat.setMinutes(0);
+			mondat.setSeconds(0);
+			mondat.setDate(1);			//1. Tag
 			if(lastfilter!=undefined && !isNaN(lastfilter)){
-				mondat.setFullYear(lastfilter);
+				mondat.setFullYear(lastfilter);//gewähltes Jahr, sonst aktuelles Jahr
 			}
 			mondat.setMonth(mondat.getMonth()-zeigemonate+1);
 			cc.strokeStyle="#e0e0e0";
