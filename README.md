@@ -8,6 +8,11 @@ $pfadtemplates = Pfad für das projekt-Template, das die Grundstruktur eines Pro
 $pfadJS = Pfad zum Javascript<br>
 $pfadphp = Pfad zum php-Scripten<br>
 
+# Sprachen/languages
+Die verwendeten Worte sind in /js/sprache.js definiert, es kann darin für jede Sprache eine Wortliste geben. 
+Momentan nur deutsch bis das Grundset gesammelt ist. Englisch als Grundobjekt angelegt.
+
+Die aktive Sprache ist in der Variabel "spracheaktiv" gesetzt.
 
 # Screenshots
 ![screenshot_1mein_tag](https://cloud.githubusercontent.com/assets/3751286/21572196/da46abbe-ced6-11e6-938a-0446452d6b5f.png)
