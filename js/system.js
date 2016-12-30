@@ -867,8 +867,6 @@ console.log("MESSAGE",s,data);
 		
 		this.ini=function(){			
 			basis=cE(ziel,"div",undefined,"projektueberblick");
-			//basis.innerHTML=getWort('loading');
-			//loadData("projektliste",parsedata,"GET");
 		}
 		this.destroy=function(){}
 		this.connect=function(objekt){
@@ -977,8 +975,9 @@ console.log("MESSAGE",s,data);
 			//sort Stunden by datum
 			dat.data.stunden.sort(sortstdliste);
 			var maxstunden=8;
+			//get maximal Stunden pro Eintrag, für Canvasheigt-Multiplikator
 			for(i=0;i<dat.data.stunden.length;i++){
-				datumstd=getdatumsObj(dat.data.stunden[i].dat);//conert to date
+				datumstd=getdatumsObj(dat.data.stunden[i].dat);//convert to date
 				if(i==0) 	firstdata=datumstd;
 				if(i==dat.data.stunden.length-1)
 							lastdata=datumstd;
@@ -1020,7 +1019,7 @@ console.log("MESSAGE",s,data);
 				//tage=getMonatstage(Zeitjetzt.getMonth(),Zeitjetzt.getFullYear());
 				tage=getMonatstage(dathelper.getMonth(),dathelper.getFullYear());
 				monatstage.push(tage);
-console.log(dathelper.get);
+console.log(">>",dathelper);
 				zeigetage+=tage;
 			}
 			
@@ -1625,7 +1624,6 @@ console.log(dathelper.get);
 		}
 		
 		var addTag=function(data){
-			//console.log("+",data);
 			sendMSG("addProjekt",selectedProjekt);
 			sendMSG("deselect",undefined);
 			deselect();
@@ -1633,14 +1631,10 @@ console.log(dathelper.get);
 		
 		var parsedata=function(data,jahrfilter){
 			var i,t,o,p,a,htmlNode,table,tr,td,th,eintragen,std;
-			//console.log(data);//Array [ Object, Object, Object, Object, Object, Object ]
+			
 			basis.innerHTML="";
 			projekte=data;
 			if(data==undefined)return;
-			
-			/*if(getDataTyp(data)=="[object String]"){
-				data=JSON.parse(data);
-			}*/
 			
 			optionsplane=cE(basis,"div");
 			showoptions();
@@ -1725,12 +1719,9 @@ console.log(dathelper.get);
 		var lastfilter=undefined;
 		
 		
-		this.ini=function(){
-			//create
+		this.ini=function(){//create
 			tabellendata=[];
 			basis=cE(ziel,"div",undefined,"monatsliste");
-			//basis.innerHTML=getWort('loading');
-			//loadData("projektliste",parseListdata,"GET");
 		}
 		this.destroy=function(){
 			
@@ -1760,12 +1751,11 @@ console.log(dathelper.get);
 				refreshTab();
 			}
 			
-			if(s=="allProjektsloaded"){
+			if(s=="allProjektsloaded"){//data:Objekt
 				projektedata=data.projekte;
 				parseListdata(data.projekte,lastfilter);
 			}
-			if(s=="selectFilterJahr"){
-				//data:string|int
+			if(s=="selectFilterJahr"){//data:string|int
 				lastfilter=data;
 				parseListdata(projektedata,data);
 			}
@@ -1984,35 +1974,6 @@ console.log(dathelper.get);
 			refreshTab();
 			return false;
 		}
-		
-		/*var getProjektdata=function(){
-			projektepointer++;
-			if(projektepointer>projekte.length-1){
-				projektToTables();
-				refreshTab();
-				
-				return; //fertig
-			}
-			var o=projekte[projektepointer];
-			o.date=getdatumsObj(o.dat);//last change
-			loadData("projektdata",parseProdata,"POST",encodeURI("name="+o.name));//+"&abdatum=1.11.2016"
-			
-		}
-		var parseProdata=function(data){
-			var i,o,s,HTMLnode,newdata;
-			data=JSON.parse(data);
-			
-			//check error
-			if(data.status!=undefined){
-				if(data.status!=msg_OK)
-					handleError(data.status);
-			}
-			
-			var o=projekte[projektepointer];
-			o.prodata=data;
-			
-			getProjektdata();//load next
-		}*/
 		
 		var projektToTables=function(){
 			var ip,i,o,data,s,HTMLnode,newdata;

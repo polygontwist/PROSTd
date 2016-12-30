@@ -14,7 +14,7 @@ var sprachen=[
 		 "Tag":"Tag",
 		 "Monat":"Monat",
 		 "letzte12mon":"die letzten 12 Monate",
-		 "filterby":"zeige",
+		 "filterby":"zeige Projekte mit Stunden von ",
 		 
 		 "Januar":"Januar",
 		 "Februar":"Februar",
