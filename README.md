@@ -8,6 +8,16 @@ $pfadtemplates = Pfad für das projekt-Template, das die Grundstruktur eines Pro
 $pfadJS = Pfad zum Javascript<br>
 $pfadphp = Pfad zum php-Scripten<br>
 
+# neue User
+Wenn zu einem Namen beim Login kein Konto exitstiert, erscheint der Button "registrieren". Gibt man dann einen Namen und ein Passwort ein wird ein neuer Ordner (mit Namen von "Name") im Ordner von "$pfaddata" angelegt.
+
+# Datenaufbau
+Zu dem eingeloggten User existiert ein gleichnamiger Ordner in "$pfaddata".<br> 
+Darin sind folgende Dateien enthalten:<br>
+* "pass.txt" mit verschlüsseltem Passwort
+* "optionen.txt" darin wird der aktuelle Status von PROSTd gespeichert (z.B. welcher Tab aktiv war) als JSON
+* "*.js" beinhalten die Daten der jeweiligen Projekte als JSON
+
 # Sprachen/languages
 Die verwendeten Worte sind in /js/sprache.js definiert, es kann darin für jede Sprache eine Wortliste geben. 
 Momentan nur deutsch bis das Grundset gesammelt ist. Englisch als Grundobjekt angelegt.
@@ -23,4 +33,5 @@ Die aktive Sprache ist in der Variabel "spracheaktiv" gesetzt.
 Die Daten werden nicht verschlüsselt, nur das Passwort - wer möchte darf hier gerne weiterentwickeln.
 
 # TODO
-Der Plan ist noch eine lokale Variante mit http://electron.atom.io/ zu erstellen.
+* Daten I/O zentraliesieren
+* lokale Variante mit http://electron.atom.io/ zu erstellen.
