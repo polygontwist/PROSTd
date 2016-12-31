@@ -2016,7 +2016,7 @@ console.log("MESSAGE",s,data);
 			//var oTag,oProjekt;
 			//
 			var Zeit = new Date(Jahr,Monat-1,1);
-			//var heute = new Date();
+			var heuteReal = new Date();
 			
 			//Anzahl der Tage im Monat und mit welchem Wochentag der Monat anfängt
 			var Start = Zeit.getDay();//0=Monatg
@@ -2076,7 +2076,7 @@ console.log("MESSAGE",s,data);
 					tr.id=s;
 					
 					data.tabtrtage.push(tr);
-					if(heute.getDate()==i && heute.getMonth()==Monat-1 && heute.getFullYear()==Jahr){
+					if(heuteReal.getDate()==i && heuteReal.getMonth()==Monat-1 && heuteReal.getFullYear()==Jahr){
 						addClass(tr,"heute");
 						}
 					addClass(tr,"tag_"+wochentagID[Start]);
