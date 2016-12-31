@@ -29,10 +29,11 @@ var pro_stunden_app=function(){
 	
 //TODO:	
 //		-Ausertung: Balken aktuelles Jahrgesammtstunden
+//					"alle" canvas +ber alle Jahre
 //				canvas:alle Projekte untereinander?-versch. Farben mit Hint(Projekttiitel)
 //		-Monat: scrollTo aktuellen Tag? (filter/tabs 'nach jahr')
 //		-Filter Projektlist? ('nach jahr'[ok],'Name','Datum') oder als Icon in Liste
-//		-session:"alive"[OK], evtl. mit Projektlistreload ->check letzte Änderung
+//		-Passwort: new
 	
 	//--"const"--
 	var msg_nouser="404:no user",
@@ -1020,12 +1021,8 @@ console.log("MESSAGE",s,data);
 				//tage=getMonatstage(Zeitjetzt.getMonth(),Zeitjetzt.getFullYear());
 				tage=getMonatstage(dathelper.getMonth(),dathelper.getFullYear());
 				monatstage.push(tage);
-console.log(">>",dathelper);
 				zeigetage+=tage;
 			}
-console.log(">>",monatstage);
-			
-			
 			
 			//....Stunden....|..||
 			can=cE(dat.divnode,"canvas");
