@@ -770,18 +770,48 @@ nav #tabnav a.tabaktiv:after{
 	width:auto;
 }
 .projektueberblick .balkenstunden{
+	position:relative;
 	height:20px;
 	background-color:#EAE73C;
-	text-align:right;
+	text-align:left;
 	color:#000;
 	font-size:8pt;
 	line-height:20px;
-	padding-right:5px;
+	padding:0;
+	min-width: 34px;
 }
 .projektueberblick .proisended{
 	background-color:#A5DA8D;
 }
-
+.projektueberblick .balkenstundenaktuellesJahr{
+	position:relative;
+	display:inline-block;
+	height: 20px;
+	left:0;
+	top:0;
+	text-align:right;
+	color:#000;
+	font-size:8pt;
+	line-height:20px;
+	padding:0;
+}
+.balkenstundentext{
+	position:absolute;
+	right:2px;
+	top:0;
+}
+.projektueberblick .jahrselect{
+	background-color:rgba(255,255,0,0.25);
+}
+.projektueberblick .balkenstundenaktuellesJahr:after{
+	content: "";
+	width: 1px;
+	height: 20px;
+	position: absolute;
+	right: 0;
+	top: 0;
+	background-color: rgba(0,0,0,0.125);
+}
 /*--allgemein----*/
 .tabgrau{
 		background-color:#c0c0c0;
