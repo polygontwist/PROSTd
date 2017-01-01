@@ -8,6 +8,9 @@ $pfadtemplates = Pfad für das projekt-Template, das die Grundstruktur eines Pro
 $pfadJS = Pfad zum Javascript<br>
 $pfadphp = Pfad zum php-Scripten<br>
 
+# Systemvorraussetzungen
+Ich habe es auf einem Raspi mit lighttpd und php laufen. Serverseitig benötigt man also php. Clientseitig benötigt man eien aktuellen Browser mit Javascript.
+
 # neue User
 Wenn zu einem Namen beim Login kein Konto exitstiert, erscheint der Button "registrieren". Gibt man dann einen Namen und ein Passwort ein wird ein neuer Ordner (mit Namen von "Name") im Ordner von "$pfaddata" angelegt.
 
