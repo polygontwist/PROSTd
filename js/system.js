@@ -945,16 +945,14 @@ console.log("MESSAGE",s,data);
 					sendMSG("scramble",HTMLnode);
 					onew.divnode=HTMLnode;
 					
-					showinfos(onew);
+					showinfosonCanvas(onew);
 				}		
 			}
 			projekteliste2=cE(basis,"div");
 			showprojekteliste2();
 		}
 		
-		
-		
-		var showinfos=function(dat){
+		var showinfosonCanvas=function(dat){
 			var i,HTMLnode,can,cc,datum,datumstd,firstdata,lastdata;
 			var Zeitjetzt = new Date();	
 			if(lastfilter!=undefined && !isNaN(lastfilter)){
@@ -1122,15 +1120,19 @@ console.log("MESSAGE",s,data);
 				cc.stroke();
 			}
 			
-			//if(scramble!=undefined)scramble.refresh(dat.divnode);
 			sendMSG("scramble",dat.divnode);
+		}
+	
+		var sortlistebyhour=function(a,b){
+			if(a.stundenges ==undefined || b.stundenges==undefined)return 0;		
+			return (a.stundenges<b.stundenges);	
 		}
 	
 		var showprojekteliste2=function(){
 			if(projekteliste2==undefined)return;
 			//Projekt|----gesammtstunden
 			var i,t,tabelle,tr,th,td,o,div;
-			//projekte.sort(); //ist=by last change Date
+			
 			projekteliste2.innerHTML="";
 
 //TODO: 2 Balken vom aktuellen Jahr, wenn gewählt
@@ -1145,6 +1147,7 @@ console.log("MESSAGE",s,data);
 				projekte[i].stundenges=stundenproproj;
 				if(maxstd<stundenproproj)maxstd=stundenproproj;
 			}
+			projekte.sort(sortlistebyhour); //ist=by last change Date
 			
 			tabelle=cE(projekteliste2,"table");
 			for(i=0;i<projekte.length;i++){
@@ -1153,7 +1156,6 @@ console.log("MESSAGE",s,data);
 					tr=cE(tabelle,"tr");
 					th=cE(tr,"th");
 					th.innerHTML=encodeString(o.data.titel);
-					//if(scramble!=undefined)scramble.refresh(th);
 					sendMSG("scramble",th);
 					td=cE(tr,"td");
 					div=cE(td,"div",undefined,"balkenstunden");
@@ -1358,7 +1360,6 @@ console.log("MESSAGE",s,data);
 					projinputs[i].addEventListener('change',changeActivityInput);
 					//console.log(projinputs[i].type);//number,text,checkbox
 				}
-				//if(scramble!=undefined)scramble.refresh(projinputs[i]);
 				sendMSG("scramble",projinputs[i]);
 			}
 			
@@ -1654,7 +1655,7 @@ console.log("MESSAGE",s,data);
 				o.date=getdatumsObj(o.pro.dat);
 				eintragen=!isinfilter(o);//Filter by Art				
 				if(eintragen && jahrfilter!=undefined && jahrfilter!="alle"){
-					eintragen=false;
+					eintragen=o.data.stunden.length>0;
 					//gucken ob Stunden passend zum Filter da sind, dann Eintrag zeigen
 					for(t=0;t<o.data.stunden.length;t++){
 						std=o.data.stunden[t];
@@ -1674,7 +1675,6 @@ console.log("MESSAGE",s,data);
 					a.innerHTML=encodeString(o.data.titel);
 					a.href="#";
 					a.onclick=klickProj;
-					//if(scramble!=undefined)scramble.refresh(a);
 					sendMSG("scramble",a);
 					o.anode=a;
 					o.trnode=tr;
@@ -1882,7 +1882,6 @@ console.log("MESSAGE",s,data);
 			o_sibling.elemente.push(inp);
 			HTMLnode.data.inputStunden=inp;//zum Stundenzusammenzählen verknüpfen
 			
-			//if(scramble!=undefined)scramble.refresh(HTMLnode);
 			sendMSG("scramble",HTMLnode);
 		}
 		
