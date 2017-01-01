@@ -116,6 +116,20 @@ var pro_stunden_app=function(){
 		return tageimMonat;
 	}
 	
+	var getTageimJahr=function(Jahr){//integer
+		var i,re=0;
+		for(i=0;i<12;i++){
+			re+=getMonatstage(i,Jahr);
+		}
+		return re;
+	}	
+	var getTageimJahrList=function(Jahr){//liste der Tage in den Monaten
+		var i,re=[];
+		for(i=0;i<12;i++){
+			re.push(getMonatstage(i,Jahr));
+		}
+		return re;
+	}	
 		
 	var decodeString=function(s){
 		//s=s.split('<').join('%38lt;');
@@ -183,6 +197,20 @@ var pro_stunden_app=function(){
 			loObj.parseFunc = auswertfunc;    
 			loObj.load(loadDataURL+"?dat="+url);    
 		}
+	}
+	
+	var drawLine=function(cancontex,x1,y1,x2,y2,size,color){
+		cancontex.lineWidth=size;
+		cancontex.strokeStyle=color;
+		cancontex.beginPath();
+		cancontex.moveTo(x1,y1);
+		cancontex.lineTo(x2,y2);
+		cancontex.stroke();
+	}
+	var drawText=function(cancontex,x,y,color,font,stext){
+		cancontex.fillStyle=color;
+		cancontex.font=font;
+		cancontex.fillText(stext,x,y);
 	}
 	
 	//--allgemeine Func--
@@ -861,9 +889,9 @@ console.log("MESSAGE",s,data);
 		var _this=this;
 		var connects=[];
 		var projekte=[];
-		var filter=[];
+		var filter=[];					//keine Feiertage zeigen: ["feiertage"]
 		var projektedata=undefined;
-		var lastfilter=undefined;
+		var lastfilter=undefined;		
 		var projekteliste2=undefined;
 		
 		this.ini=function(){			
@@ -952,174 +980,96 @@ console.log("MESSAGE",s,data);
 			showprojekteliste2();
 		}
 		
-		var showinfosonCanvas=function(dat){
-			var i,HTMLnode,can,cc,datum,datumstd,firstdata,lastdata;
-			var Zeitjetzt = new Date();	
-			if(lastfilter!=undefined && !isNaN(lastfilter)){
-				Zeitjetzt.setFullYear(lastfilter);
+		var showinfosonCanvas=function(dat){//aktuelles jahr
+			var i,HTMLnode,can,cc,
+				datumstd,maxstunden,stundenliste;
+			var posfix=0.5;//sonst keine 1px linien ...
+			
+			var zeigezeit = new Date();
+			zeigezeit.setMilliseconds(1);
+			zeigezeit.setHours(12);		//default 12, falls Zeitverschiebung...	
+			zeigezeit.setMinutes(0);
+			zeigezeit.setSeconds(0);
+			zeigezeit.setDate(1);		//1. des Monats
+			zeigezeit.setMonth(0);		//Januar
+			if(lastfilter!=undefined && !isNaN(lastfilter)){//Jahresfilter 'alle', 2016,2017...
+				zeigezeit.setFullYear(lastfilter);
 			}
 			
-			var zeigemonate=12,
-				zeigetage=0,			
-				x=0,
-				canheight=50,
-				y=canheight-1;
-			
 			dat.divnode.innerHTML="";
+			if(dat.data.stunden.length==0)return;//keine Stunden zum anzeigen vorhanden
+			
 			HTMLnode=cE(dat.divnode,"h1");
 			HTMLnode.innerHTML=encodeString(dat.data.titel);
 			
-			if(dat.data.stunden.length==0)return;//keine Stunden
-			
 			//sort Stunden by datum
 			dat.data.stunden.sort(sortstdliste);
-			var maxstunden=8;
-			//get maximal Stunden pro Eintrag, für Canvasheigt-Multiplikator
+			
+			maxstunden=8;
+			stundenliste=[];
+			var posX=0;
+			//maximale Anzahl Stunden pro Eintrag/Tag, für Canvasheigt-Multiplikator
+			//xPosition im canvas
 			for(i=0;i<dat.data.stunden.length;i++){
-				datumstd=getdatumsObj(dat.data.stunden[i].dat);//convert to date
-				if(i==0) 	firstdata=datumstd;
-				if(i==dat.data.stunden.length-1)
-							lastdata=datumstd;
+				datumstd=getdatumsObj(dat.data.stunden[i].dat);		//convert to date
+				if(datumstd.getFullYear()==zeigezeit.getFullYear()){//Stunden im BEreich vom aktuellen Jahr?
+					posX=(datumstd.getTime()-zeigezeit.getTime())/1000/60/60/24;//Tag im Jahr
+					stundenliste.push( {
+						"x":posX,
+						"datum":datumstd,							//Eintrag als Datum
+						"stunden":dat.data.stunden[i].stunden, 		//Anzahl Stunden
+						"std":dat.data.stunden[i].dat 				//original
+						} );										//merken
+				} 
 				if(maxstunden<dat.data.stunden[i].stunden)maxstunden=dat.data.stunden[i].stunden;
 			}
-			//erster Eintrag ... letzter Eintrag (... heute)
-			//var firstdata=dat.data.stunden[0];
-			var anz=dat.data.stunden.length;
-			if(anz<2)anz=1;
-			//var lastdata=dat.data.stunden[anz-1];
-			var jetzt=new Date();
-			if(lastfilter!=undefined && !isNaN(lastfilter)){
-				jetzt.setFullYear(lastfilter);
+			
+			if(stundenliste.length==0){
+				HTMLnode.innerHTML="";
+				return;
 			}
 			
-			var a=firstdata.getTime();//ms seit 1970
-			var b=lastdata.getTime();//ms seit 1970
-			var c=jetzt.getTime();
-			var px,lastx,py,stundenanz;
+			//Anzahl der Tage im Jahr =canvar width
+			var anzahlTage=getTageimJahr(zeigezeit.getFullYear());
+			var monatsTage=getTageimJahrList(zeigezeit.getFullYear());
 			
-			var posfix=0.5;//sonst keine 1px linien ...
+			var canWidth=anzahlTage;
+			var canHeight=50;//px
+			var x,y;
 			
-			var tageAC=Math.floor((c-a)/1000/60/60/24);
-			
-			//console.log(c>b,tageAC);//ms-sec-min-h-tag
-			
-			var dathelper=new Date();//getdatumsObj('2016-12-01')
-			dathelper.setMilliseconds(1);
-			dathelper.setHours(12);		//default 12, falls Zeitverschiebung...	
-			dathelper.setMinutes(0);
-			dathelper.setSeconds(0);
-			dathelper.setDate(1);
-			dathelper.setFullYear(Zeitjetzt.getFullYear());
-			
-			var monatstage=[];
-			var tage;
-			//Anzahl der Tage im Monat ermitteln für canvas-width
-			for(i=0;i<zeigemonate;i++){
-				dathelper.setMonth(Zeitjetzt.getMonth()-zeigemonate+i);
-				//tage=getMonatstage(Zeitjetzt.getMonth(),Zeitjetzt.getFullYear());
-				tage=getMonatstage(dathelper.getMonth(),dathelper.getFullYear());
-				monatstage.push(tage);
-				zeigetage+=tage;
-			}
-			
-			//....Stunden....|..||
 			can=cE(dat.divnode,"canvas");
-			can.width=zeigetage;
-			can.height=canheight;
-			can.title=getWort("letzte12mon");
+			can.width =canWidth+1;
+			can.height=canHeight;
+			can.title =getWort("letzte12mon");
 			cc=can.getContext('2d');
 			cc.lineWidth=1;
-			px=0;
 			
-			//Monatstrenner
-			var mondat=new Date();
-			mondat.setMilliseconds(1);
-			mondat.setHours(12);		//default 12, falls Zeitverschiebung...	
-			mondat.setMinutes(0);
-			mondat.setSeconds(0);
-			mondat.setDate(1);			//1. Tag
-			if(lastfilter!=undefined && !isNaN(lastfilter)){
-				mondat.setFullYear(lastfilter);//gewähltes Jahr, sonst aktuelles Jahr
+			//Monatstrenner, Monatskürzel, aktuelles Jahr
+			x=0;
+			drawText(cc,2+posfix,canHeight-3+posfix,"#e0e0e0","20px Verdana",zeigezeit.getFullYear());
+			for(i=0;i<monatsTage.length;i++){
+				if(i==0)drawLine(cc, x+posfix,0+posfix,x+posfix,canHeight+posfix,1,"#e0e0e0");
+				drawText(cc,x+2+posfix,10+posfix,"#c0c0c0","10px Verdana",getWort('kurz'+MonatsnameID[i]).toUpperCase());
+				x+=monatsTage[i];
+				drawLine(cc, x+posfix,0+posfix,x+posfix,canHeight+posfix,1,"#e0e0e0");				
 			}
-			mondat.setMonth(mondat.getMonth()-zeigemonate+1);
-			cc.strokeStyle="#e0e0e0";
-			//anfang senkrechte
-			cc.beginPath();
-			cc.moveTo(px+posfix,canheight+posfix);
-			cc.lineTo(px+posfix,0+posfix);
-			cc.stroke();
-			for(i=0;i<monatstage.length;i++){
-				cc.fillStyle="#c0c0c0";
-				cc.font="10px Verdana";//width"+monatstage[i]+"px"
-				//cc.textAlign="center";
-				cc.fillText(getWort('kurz'+MonatsnameID[mondat.getMonth()]).toUpperCase(),px+2,10);
-				mondat.setMonth(mondat.getMonth()+1);
+			drawLine(cc, canWidth+posfix,0+posfix,canWidth+posfix,canHeight+posfix,1,"#e0e0e0");
+			drawLine(cc, 0+posfix,canHeight+posfix-1,canWidth+posfix,canHeight+posfix-1,1,"#e0e0e0");
+
+			
+			//Tagesstunden zeichnen
+			var farbe="rgba(127,202,93,0.7)";
+			if(dat.id=="urlaub")farbe="rgba(94,156,201,0.7)";
+			for(i=0;i<stundenliste.length;i++){
+				datumstd=stundenliste[i];
+				x=datumstd.x;
+				y=Math.floor(canHeight - (canHeight/(maxstunden+1)* datumstd.stunden));
+				if(dat.id=="urlaub")y=0;
+				drawLine(cc, x+posfix,canHeight+posfix,x+posfix,y+posfix,1,farbe);
 				
-				//Trenner
-				px+=monatstage[i];
-				cc.beginPath();
-				cc.moveTo(px+posfix,canheight+posfix);
-				cc.lineTo(px+posfix,0+posfix);
-				cc.stroke();				
+				drawLine(cc, x+posfix,canHeight+posfix,x+posfix,canHeight-2+posfix,2,"#333333");
 			}
-			//ende-senkrechte
-			cc.beginPath();
-			cc.moveTo(zeigetage-1+posfix,canheight+posfix);
-			cc.lineTo(zeigetage-1+posfix,0+posfix);
-			cc.stroke();
-			
-			//Daten ausgeben
-			cc.strokeStyle="rgba(127,202,93,0.7)";
-			cc.lineWidth=1;
-			if(dat.id=="urlaub")cc.strokeStyle="rgba(94,156,201,0.7)";
-			cc.beginPath();
-			cc.moveTo(x+posfix,y+posfix);
-			var datenpunkte=[];
-			lastx=0;
-			for(i=0;i<dat.data.stunden.length;i++){
-				datum=getdatumsObj(dat.data.stunden[i].dat);
-				px=zeigetage-Math.floor((c-datum.getTime())/1000/60/60/24)-1;
-				if(px<zeigetage){//nur bis heute, keine zukünftigen
-					/*if(lastx<px-1 ){
-						cc.lineTo(lastx+1+posfix,y+posfix);					
-						cc.lineTo(px-1+posfix,y+posfix);					
-					}
-					*/
-					stundenanz=dat.data.stunden[i].stunden;
-					if(dat.id=="urlaub")stundenanz=9;
-					//if(stundenanz==0)stundenanz=maxstunden*0.25;
-					py=Math.floor(y-(canheight/(maxstunden+1)*(stundenanz)));				
-					
-					cc.lineTo(px+posfix,y+posfix);//ran
-					cc.lineTo(px+posfix,py+posfix);//hoch
-					datenpunkte.push({"x":px,"y":py});
-					cc.lineTo(px+posfix,y+posfix);//runter
-					lastx=px;
-				}
-			}
-			if(lastx<zeigetage){
-				cc.lineTo(lastx+1+posfix,y+posfix);
-				cc.lineTo(zeigetage+posfix,y+posfix);
-			}
-			cc.stroke();
-			
-			cc.strokeStyle="#cccccc";//#636363
-			cc.beginPath();
-			cc.moveTo(0+posfix,y+posfix);
-			cc.lineTo(zeigetage+posfix,y+posfix);
-			cc.stroke();
-			
-			cc.strokeStyle="#333333";
-			cc.lineWidth=2;
-			for(i=0;i<datenpunkte.length;i++){
-				px=datenpunkte[i].x;
-				py=datenpunkte[i].y;
-				cc.beginPath();
-				cc.moveTo(px+posfix,y+posfix);
-				cc.lineTo(px+posfix,y-2+posfix);
-				cc.stroke();
-			}
-			
+						
 			sendMSG("scramble",dat.divnode);
 		}
 	
@@ -1135,8 +1085,6 @@ console.log("MESSAGE",s,data);
 			
 			projekteliste2.innerHTML="";
 
-//TODO: 2 Balken vom aktuellen Jahr, wenn gewählt
-			
 			var maxstd=0,stundenproproj;
 			for(i=0;i<projekte.length;i++){
 				o=projekte[i].data;
@@ -1158,6 +1106,7 @@ console.log("MESSAGE",s,data);
 					th.innerHTML=encodeString(o.data.titel);
 					sendMSG("scramble",th);
 					td=cE(tr,"td");
+//console.log(o);					
 					div=cE(td,"div",undefined,"balkenstunden");
 					div.style.width=(100/maxstd*o.stundenges)+"%";
 					if(o.stundenges>0)
