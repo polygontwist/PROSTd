@@ -28,12 +28,14 @@ var pro_stunden_app=function(){
 	};
 	
 //TODO:	
-//		-Ausertung: Balken aktuelles Jahrgesammtstunden
-//					"alle" canvas +ber alle Jahre
+//		-Ausertung: "alle" canvas +ber alle Jahre
 //				canvas:alle Projekte untereinander?-versch. Farben mit Hint(Projekttiitel)
 //		-Monat: scrollTo aktuellen Tag? (filter/tabs 'nach jahr')
 //		-Filter Projektlist? ('nach jahr'[ok],'Name','Datum') oder als Icon in Liste
 //		-Passwort: new
+//		-user css
+// APP: prompt()->kein prompt verfügbar! (wurde überschrieben! ->eigenener Dialog nötig!)
+// Dialoge: wenn es keine Projekte gibt, anderen Text zeigen!
 	
 	//--"const"--
 	var msg_nouser="404:no user",
@@ -147,6 +149,15 @@ var pro_stunden_app=function(){
 	}
 	
 	var loadData=function(url, auswertfunc,getorpost,daten){
+		
+		if(globaldata!=undefined)
+		if(globaldata.modus!=undefined){
+			if(globaldata.modus=="app"){
+				loadDataAPP(url, auswertfunc,getorpost,daten);
+				return;
+			}
+		}
+		
 		var loObj=new Object();
 		loObj.url=url;    
 		try {
@@ -198,7 +209,81 @@ var pro_stunden_app=function(){
 			loObj.load(loadDataURL+"?dat="+url);    
 		}
 	}
-	
+	var loadDataAPP=function(url, auswertfunc,getorpost,daten){
+		console.log("load",globaldata.user,url,getorpost,daten);
+		var data={};
+		if(url=="getoptionen"){//Optionen laden
+			data={
+				"dat":{"tabaktiv":0,"showscramblebutt":false},
+				"status":"OK"
+			}
+			auswertfunc(JSON.stringify(data));
+		}
+		else
+		if(url=="projektliste"){//Liste der Projekte als Dateinamen + Dateiänerungsdatum
+			data={"user":"lokal",
+				"lastaction":"",
+				"status":"OK",
+				"dat":[]			//"name":"","dat":"" //Dateiname, Dateiänderungsdatum
+				//"name":"test","dat":"2017-12-11 11:11:11"		
+
+			}
+			auswertfunc(JSON.stringify(data));
+		}
+		else
+		if(url=="setoptionen"){//Optionen speichern
+			data={"user":"lokal",
+				"lastaction":"",
+				"status":"OK"
+			}
+			auswertfunc(JSON.stringify(data));
+		}
+		else
+		if(url=="maindata"){//alive
+			data={"user":"lokal",
+			"dat":"maindata",
+			"lastaction":"maindata",
+			"status":"OK"
+			};
+			auswertfunc(JSON.stringify(data));
+		}
+		else
+		if(url=="projektdata"){
+			var filename=daten.split("=")[1];
+			data={"user":"lokal",
+			"dat":"",
+			"dateiname":filename,
+			"lastaction":"maindata",
+			"status":"OK"
+			};//direkt Dateiinhalt oder dieses mit Status ERROR...
+			
+			data={
+				"id":filename,
+				"titel":"Testprojekt",
+				"isnew":true,
+				"info":{
+					"isended":false,
+					"auftraggeber":"",
+					"projektleiter":"",
+					"startdatum":"",
+					"enddatum":"",
+					"status":"",
+					"projektart":[],
+					"gruppe":[]
+				},
+			"stunden":[]
+			};
+			
+			auswertfunc(JSON.stringify(data));
+		}
+		//"projektstundenlisteupdate"
+		//"projekttitelupdate"
+		//"projektinfoupdate"
+		//"newprojekt"
+		
+		else
+			alert("load\n"+globaldata.user+'\n'+url+'\n'+getorpost+'\n'+daten);
+	}	
 	//--canvas--
 	var drawLine=function(cancontex,x1,y1,x2,y2,size,color){
 		cancontex.lineWidth=size;
@@ -243,6 +328,11 @@ var pro_stunden_app=function(){
 		}		
 	}
 
+	var hatProjekte=function(){
+		if(geladeneprojekte!=undefined){
+			return geladeneprojekte.hatprojekte();
+		}
+	}
 	
 	var o_statusDialog=function(zielnode){
 		var dlgbasis=undefined;
@@ -635,7 +725,6 @@ console.log("MESSAGE",s,data);
 		}
 		this.ini=function(){//immer wenn Tab gedrückt
 			connects=[];
-			loadData("projektliste",parsedata,"GET");
 		}
 		this.destroy=function(){}
 		this.connect=function(objekt){
@@ -653,6 +742,13 @@ console.log("MESSAGE",s,data);
 			}			
 			//if(s=="getProjektliste"){return projekte;}
 			//if(s=="getProjektdata"){return projekte[].id==data;}
+			if(s=="starttabs"){
+				loadData("projektliste",parsedata,"GET");
+			}		
+		}
+		
+		this.hatprojekte=function(){
+			return(projekte.length>0);
 		}
 		
 		var sendMSG=function(s,data){
@@ -878,6 +974,10 @@ console.log("MESSAGE",s,data);
 					if(i!=k)
 						odata.inhalte[i].connect(odata.inhalte[k].connect());
 				}
+			}
+			//laden erst nach connect anstoßen!
+			for(i=0;i<odata.inhalte.length;i++){
+				odata.inhalte[i].Message("starttabs");
 			}
 		}
 		
@@ -1156,7 +1256,8 @@ console.log("MESSAGE",s,data);
 			//create
 			basis=cE(ziel,"div",undefined,"editorProjekt");
 			basis.innerHTML="";
-			statusDlg.show("",getWort("wahleprojekt"),"posprojektlist");//selectaprojekt
+			if(hatProjekte())
+				statusDlg.show("",getWort("wahleprojekt"),"posprojektlist");//selectaprojekt
 		}
 		this.destroy=function(){
 			var i,inp;
@@ -2150,7 +2251,10 @@ console.log("MESSAGE",s,data);
 			}
 			//console.log(trselect);
 			if(trselect!=undefined){
-				statusDlg.show("",getWort("selectaprojekt"),"posprojektlist");
+				if(hatProjekte())
+					statusDlg.show("",getWort("selectaprojekt"),"posprojektlist");
+					else
+					statusDlg.show("",getWort("firstcreateaprojekt"),"posprojektlist");
 				sendMSG("selectTag",trselect.data);
 				}
 		}
