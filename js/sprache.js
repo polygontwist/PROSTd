@@ -57,6 +57,7 @@ var sprachen=[
 		 "urlaub":"Urlaub",
 		 "aenderungsaved":"Änderung gespeichert.",
 		 "selectaday":"Wähle einen Tag!",
+		 "firstcreateaprojekt":"Bitter erst ein Projekt anlegen.",
 		 "selectaprojekt":"Welches Projekt soll eingefügt werden?",
 		 "listegeladen":"Liste geladen.",
 		 "deleteeintrag":"Eintrag löschen?",
