@@ -1659,16 +1659,22 @@ console.log("MESSAGE",s,data);
 			var basis=cE(ziel,"div",undefined,"listactions");
 			
 			var ini=function(){
-				var HTMLnode;
+				var HTMLnode,inp;
+				inp=cE(basis,"input",undefined,"inp_newpro");
+				inp.type="text";
+				inp.placeholder=getWort("inp_newProj");
+				
+				
 				HTMLnode=cE(basis,"a",undefined,"button optbutt");
 				HTMLnode.href="#";
+				HTMLnode.data={"inp":inp};
 				HTMLnode.innerHTML=getWort("butt_newProj");
 				HTMLnode.addEventListener('click',bklicknewPro);
 				
 			}
 			
 			var bklicknewPro=function(e){
-				var name = prompt(getWort("getnewProName"), "");
+				var name = this.data.inp.value; //prompt(getWort("getnewProName"), "");
 				if(name!=null){
 					if(name==""){
 						alert(getWort("mesage_inputnamenoinput"));
@@ -1722,7 +1728,7 @@ console.log("MESSAGE",s,data);
 			for(i=0;i<data.length;i++){
 				o=data[i];
 				o.date=getdatumsObj(o.pro.dat);
-				eintragen=!isinfilter(o);//Filter by Art				
+				eintragen=!isinfilter(o);//Filter by Art
 				if(eintragen && jahrfilter!=undefined && jahrfilter!="alle"){
 					eintragen=o.data.stunden.length>0;
 					//gucken ob Stunden passend zum Filter da sind, dann Eintrag zeigen
@@ -1734,6 +1740,7 @@ console.log("MESSAGE",s,data);
 						}
 					}
 				}
+				if(o.data.stunden.length==0)eintragen=true;
 				
 				if(eintragen){
 					tr=cE(table,"tr");

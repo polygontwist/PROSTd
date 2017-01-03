@@ -83,6 +83,7 @@ var sprachen=[
 		 
 		 "wahleprojekt":"Wähle das zu bearbeitende Projekt aus!",
 		 "buttdel":"löschen",
+		 "inp_newProj":"Projektname",
 		 "butt_newProj":"neues Projekt",
 		 "butt_viewpreMon":"zeige",
 		 "butt_viewnexMon":"zeige",

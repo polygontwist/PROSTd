@@ -650,10 +650,7 @@ nav #tabnav a.tabaktiv:after{
 .projektliste .listactions{
 	padding:2px;
 }
-.projektliste .optbutt{
-	margin:0;
-	display:inline-block;
-}
+
 
 .tab_editProj .projektliste .p_aktiv{
 	-webkit-animation-name: none;
@@ -678,6 +675,29 @@ nav #tabnav a.tabaktiv:after{
 	transition: left 200ms ease-in-out;	
 }
 
+.projektliste .optbutt{
+	margin:0;
+	display:inline-block;
+	vertical-align: top;
+	-webkit-border-radius:0 5px 5px 0;
+	-moz-border-radius:0 5px 5px 0;
+	border-radius:0 5px 5px 0;
+	padding:5px;
+	padding-right:8px;
+	height:32px;
+	line-height:20px;
+
+}
+.projektliste a.optbutt:after,.projektliste a.optbutt:hover:after{
+	display:none;
+}
+.inp_newpro{
+	margin:0;
+	margin-left:10px;
+	height: 32px;
+	border: 1px solid #222;
+	vertical-align: top;
+}
 
 /*--Projektdaten--*/
 .editorProjekt{
