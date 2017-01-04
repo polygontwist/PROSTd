@@ -13,14 +13,15 @@ body *{
 }
 
 body.main{
-	background-color:#fff;
+	background-color:#ccc;
 }
 
 #app_psa{
 	position:absolute;
-	top:60px;
+	top:54px;
 	width:100%;
 	bottom:2px;
+	background-color:#ffffff;
 }
 
 
@@ -213,6 +214,7 @@ nav {
 	display:block;
 	line-height:32px;
 	height:54px;
+	white-space:nowrap;
 	
 	/*background: -webkit-linear-gradient(top, #656565, #4b4b4b);
 background: -moz-linear-gradient(top, #656565, #4b4b4b);
@@ -349,6 +351,7 @@ nav #tabnav a.tabaktiv:after{
 	top:0;left:0;
 	height:54px;
 	width:100%;
+	padding-top: 6px;
 }
 
 .tab_editTag,.tab_editUeberblick,.tab_editProj{
@@ -588,6 +591,7 @@ nav #tabnav a.tabaktiv:after{
 	width: 30%;
 	height:100%;
 	overflow:auto;
+	
 }
 .projektliste p{
 	margin:0;
@@ -649,6 +653,7 @@ nav #tabnav a.tabaktiv:after{
 }
 .projektliste .listactions{
 	padding:2px;
+	white-space:nowrap;
 }
 
 
@@ -697,6 +702,24 @@ nav #tabnav a.tabaktiv:after{
 	height: 32px;
 	border: 1px solid #222;
 	vertical-align: top;
+	width:calc(100% - 155px);
+}
+
+
+@media screen and (max-width: 870px) {
+	.inp_newpro{
+		width:calc(100% - 45px);
+	}	
+	.projektliste .optbutt{
+		color:rgba(0,0,0,0);
+		font-size:0;
+	}
+	.optbutt:before{
+		content:"+";
+		color:#000;
+		width:32px;
+		font-size:13pt;
+	}
 }
 
 /*--Projektdaten--*/
@@ -976,7 +999,10 @@ input.booleanswitch:checked ~ label:after{
 	font-size:13pt;	
 }
 
-
-
-
-
+/* responsive */
+@media screen and (max-width: 566px) {
+	nav .logo{display:none;}
+}
+@media screen and (max-width: 700px) {
+	nav h1{display:none;}
+}
