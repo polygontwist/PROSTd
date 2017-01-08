@@ -768,7 +768,7 @@ console.log("MESSAGE",s,data);
 			jahrdata={min:d.getFullYear(),max:d.getFullYear(),jahre:{}};
 			for(i=0;i<projekte.length;i++){
 				proj=projekte[i];
-				//console.log(proj);
+				//console.log("#>",proj);
 				for(t=0;t<proj.data.stunden.length;t++){
 					std=proj.data.stunden[t];
 					jahr=parseInt(std.dat.split("-")[0]);//"2016-12-26"
@@ -1800,11 +1800,11 @@ console.log("MESSAGE",s,data);
 							"datstd":stagstundeneintrag
 							};
 				
-				if(data.name=="urlaub"){
+				if(data.id=="urlaub"){
 					stagstundeneintrag.typ="U";
 					stagstundeneintrag.kommentar=" von ";					
 					}
-				if(data.name=="feiertage"){
+				if(data.id=="feiertage"){
 					stagstundeneintrag.typ="F";
 					stagstundeneintrag.kommentar="";					
 					}
