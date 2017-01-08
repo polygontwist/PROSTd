@@ -34,6 +34,7 @@ var pro_stunden_app=function(){
 //		-Filter Projektlist? ('nach jahr'[ok],'Name','Datum') oder als Icon in Liste
 //		-Passwort: new
 //		-user css
+//		Monatsauswertung
 	
 	//--"const"--
 	var msg_nouser="404:no user",
