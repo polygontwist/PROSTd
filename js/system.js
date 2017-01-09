@@ -1774,7 +1774,7 @@ console.log("MESSAGE",s,data);
 				if(trselect.data.monat<10)id+="0";
 				id+=trselect.data.monat+'_';
 				if(trselect.data.tag<10)id+="0";
-				id+=trselect.data.tag+'-'+data.name;//
+				id+=trselect.data.tag+'-'+data.id;//
 			var thetag=trselect.data.jahr+'-';
 				if(trselect.data.monat<10)thetag+="0";
 				thetag+=trselect.data.monat+'-';
