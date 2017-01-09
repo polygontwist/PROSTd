@@ -32,8 +32,8 @@ var pro_stunden_app=function(){
 //				canvas:alle Projekte untereinander?-versch. Farben mit Hint(Projekttiitel)
 //		-Monat: scrollTo aktuellen Tag? (filter/tabs 'nach jahr')
 //		-Filter Projektlist? ('nach jahr'[ok],'Name','Datum') oder als Icon in Liste
-//		-Passwort: new
-//		-user css
+//		-Passwort: new (www)
+//		-user css[prog:ok]
 //		Monatsauswertung
 	
 	//--"const"--
@@ -1820,7 +1820,7 @@ console.log("MESSAGE",s,data);
 		}
 		
 		var createProjektItem=function(ziel,data){//HTMLNode in Liste erzeugen
-			var a,inp,HTMLnode;
+			var a,inp,HTMLnode,tmp;
 			if(gE(data.id)!=undefined)return;//ist schon drinn
 			
 			var isturlaub=data.datstd.typ.indexOf("U")>-1;
@@ -1842,6 +1842,10 @@ console.log("MESSAGE",s,data);
 			HTMLnode=cE(ziel,"div",data.id, "projektitem");
 			if(isturlaub)addClass(HTMLnode,"urlaubtext");
 			if(istfeiertag)addClass(HTMLnode,"feiertagtext");
+			
+			tmp=data.data.projektdata.id;//.split('_')[0];
+			addClass(HTMLnode,tmp);//console.log("classe>",tmp);//projektitem
+			
 			a=cE(HTMLnode,"a");
 			a.innerHTML=encodeString(data.titel);//.titel	
 			
