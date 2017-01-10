@@ -370,7 +370,7 @@ var AppBridge=function(){
 	
 	var createnewProjektfile=function(pd){
 		var filename=clearfilename(decodeURI(pd.newdata));
-		
+		var titel=decodeURI(pd.newdata);
 		if(filename.length<10){//10
 			filename=filename+"_";
 			while(filename.length<10){
@@ -398,7 +398,7 @@ var AppBridge=function(){
 		tmp+=heute.getDate();
 		
 		template=template.split('$ID').join(filename);//str_replace('$ID', $newProjektname, $buffer);
-		template=template.split('$TITEL').join(pd.newdata);//htmlentities(urldecode($namedata));
+		template=template.split('$TITEL').join(titel);//htmlentities(urldecode($namedata));
 		template=template.split('$HEUTE').join(tmp);//date("Y-m-d");
 		var data={"user":"lokal",
 			"dat":"",
@@ -535,28 +535,23 @@ var AppeleWin=function(){
 		
 		if(!fs.existsSync(userdokumente+"/PROSTd")){
 			//create dir
-			console.log("no1");
 			fs.mkdirSync(userdokumente+"/PROSTd");
 		}
 		if(!fs.existsSync(userdokumente+"/PROSTd/userData")){
 			//create dir
-			console.log("no2");
 			fs.mkdirSync(userdokumente+"/PROSTd/userData");
 			firststart=true;
 		}
 		
-		//create urlaub/feiertage
-		//basepathTEMPLATES
+		//create urlaub
 		if(!fs.existsSync(userdokumente+"/PROSTd/userData/urlaub"+datafileendung)){
 			if(fs.existsSync(basepathTEMPLATES+"urlaub"+datafileendung)){
 				console.log("create urlaub");
 				tmp=fs.readFileSync(basepathTEMPLATES+"urlaub"+datafileendung,'utf-8');
 				fs.writeFileSync(userdokumente+"/PROSTd/userData/urlaub"+datafileendung,tmp,'utf-8');
 			}
-			
-			//fs.mkdirSync(userdokumente+"/PROSTd/userData");
 		}
-		
+		//create feiertage
 		if(!fs.existsSync(userdokumente+"/PROSTd/userData/feiertage"+datafileendung)){
 			if(fs.existsSync(basepathTEMPLATES+"feiertage"+datafileendung)){
 				console.log("create feiertage");
@@ -565,8 +560,15 @@ var AppeleWin=function(){
 			}
 		}
 		
+		//usercss
+		if(fs.existsSync(userdokumente+"/PROSTd/userData/style.css")){
+			var newNode=document.createElement("link");
+			newNode.type="text/css";
+			newNode.rel="stylesheet";
+			newNode.href=userdokumente+"/PROSTd/userData/style.css";
+			document.head.appendChild(newNode);
+		}
 		
-		//fs.existsSync(filepath)
 		
 		//basepathDATA=basepath+"/userData/";
 		basepathDATA=userdokumente+"/PROSTd/userData/";
@@ -594,7 +596,8 @@ var AppeleWin=function(){
 		//window.addEventListener('moved',resizer );	
 		window.addEventListener('resize',resizer );
 		
-		if(firststart)alert("Deine Daten findest Du unter: "+basepathDATA);
+		if(firststart)
+			alert("Deine Daten findest Du unter:\n"+basepathDATA);
 	}
 	
 	var resizer=function(event){

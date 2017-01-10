@@ -41,6 +41,8 @@ var sprachen=[
 		 "kurzNovember":"Nov",
 		 "kurzDezember":"Dez",
 		 
+		 "KalWoch":"KW",
+		 
 		 "Mo":"Mo",
 		 "Di":"Di",
 		 "Mi":"Mi",
@@ -52,7 +54,7 @@ var sprachen=[
 		 "Kommentar":"Kommentar",
 		 "worktyp":"Typ",
 		 "Stunden":"Stunden",
-		 "stundengesammt":"Stunden im Monat: ",
+		 "stundengesammt":"Arbeitsstunden im Monat: ",
 		 "stundengesammt2":" von ",
 		 "urlaub":"Urlaub",
 		 "aenderungsaved":"Änderung gespeichert.",
@@ -63,6 +65,8 @@ var sprachen=[
 		 "deleteeintrag":"Eintrag löschen?",
 		 "projtitel":"Projekttitel",
 		 "Infos":"Infos",
+		 "projid":"ProjektID / Dateiname",
+		 "keinestunden":"Noch keine Stunden vorhanden.",
 		 
 		 "datisended":"Ist Projekt beendet?",
 		 "datauftraggeber":"Auftraggeber",

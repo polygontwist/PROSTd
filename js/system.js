@@ -124,14 +124,27 @@ var pro_stunden_app=function(){
 		}
 		return re;
 	}	
-	var getTageimJahrList=function(Jahr){//liste der Tage in den Monaten
+	var getTageimJahrList=function(Jahr){//Liste der Tage in den Monaten
 		var i,re=[];
 		for(i=0;i<12;i++){
 			re.push(getMonatstage(i,Jahr));
 		}
 		return re;
 	}	
-		
+	
+	var getKalenderwoche=function(tag,monat,jahr){
+		function getdonnerstag(datum) {
+			var Do=new Date();
+			Do.setTime(datum.getTime() + (3-((datum.getDay()+6) % 7)) * 86400000);
+			return Do;
+		}
+		var Datum=new Date(jahr,monat-1,tag);
+		var DoDat=getdonnerstag(Datum);
+		var kwjahr=DoDat.getFullYear();
+		var DoKW1=getdonnerstag(new Date(kwjahr,0,4));
+		return Math.floor(1.5+(DoDat.getTime()-DoKW1.getTime())/86400000/7)
+	}
+	
 	var decodeString=function(s){
 		//s=s.split('<').join('%38lt;');
 		//s=s.split('>').join('%38gt;');
@@ -1250,10 +1263,17 @@ console.log("MESSAGE",s,data);
 			
 			tab=cE(basis,"table");
 			
+			//input ID
+			tr=cE(tab,"tr");
+			th=cE(tr,"th");
+			th.innerHTML=getWort("projid")+':';
+			td=cE(tr,"td",undefined,"textid");
+			td.innerHTML=encodeString(projekt.id);
+			
 			//input titel
 			tr=cE(tab,"tr");
 			th=cE(tr,"th");
-			th.innerHTML=getWort("projtitel");
+			th.innerHTML=getWort("projtitel")+':';
 			td=cE(tr,"td");
 			inp=cE(td,"input");
 			inp.value=encodeString(projekt.titel);
@@ -1307,6 +1327,14 @@ console.log("MESSAGE",s,data);
 			h1=cE(td,"h1");
 			h1.innerHTML=getWort("Stunden");
 			td.colSpan=2;
+			
+			if(projekt.stunden.length==0){
+				tr=cE(tab,"tr");
+				td=cE(tr,"td");
+				td.innerHTML=getWort("keinestunden");
+				td.colSpan=2;
+			}
+			
 			for(i=0;i<projekt.stunden.length;i++){
 				std=projekt.stunden[i];
 				
@@ -2096,6 +2124,7 @@ console.log("MESSAGE",s,data);
 							sollStundenproMonat+=sollsundenproTag;
 					
 					
+					
 					for(t=0;t<spalten;t++){
 							td=cE(tr,"td");
 							
@@ -2107,6 +2136,10 @@ console.log("MESSAGE",s,data);
 							if(tabheadtext[t]=="Monat"){
 								td.innerHTML=getWort(MonatsnameID[Monat-1]);
 								td.className="monat";
+								if(Start==0){
+									td.innerHTML=(getKalenderwoche(i,Monat,Jahr))+'.'+getWort('KalWoch');
+									addClass(td,"kalwoche");
+									}
 								}
 							else
 							if(tabheadtext[t]=="stdtaggesammt"){
