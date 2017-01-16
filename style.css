@@ -636,6 +636,7 @@ nav #tabnav a.tabaktiv:after{
 .monatsliste .monproausw th{
 	background-color:#565656;
 	color:#ffffff;
+	text-align:center;
 }
 /*---Projektliste---*/
 
