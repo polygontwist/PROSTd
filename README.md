@@ -35,6 +35,5 @@ Die aktive Sprache ist in der Variabel "spracheaktiv" gesetzt.
 # Disclaimer 
 Die Daten werden nicht verschlüsselt, nur das Passwort - wer möchte darf hier gerne weiterentwickeln.
 
-# TODO
-* Daten I/O zentraliesieren
-* lokale Variante mit http://electron.atom.io/ zu erstellen.
+# lokale Variante 
+mit http://electron.atom.io/ siehe https://github.com/polygontwist/PROSTd-App
