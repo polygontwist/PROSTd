@@ -15,6 +15,10 @@ var sprachen=[
 		 "Monat":"Monat",
 		 "letzte12mon":"die letzten 12 Monate",
 		 "filterby":"zeige Projekte mit Stunden von ",
+		 "zeigebeendete":"zeige beendete Projekte",
+		 "datzeigebeendete":"zeige beendete Projekte",
+		 "reststunden":"geplante Reststunden",
+		 "circa":"ca.",
 		 
 		 "Januar":"Januar",
 		 "Februar":"Februar",
@@ -57,6 +61,7 @@ var sprachen=[
 		 "monatsauswertung":"Monatsauswertung",
 		 "stundengesammt":"Arbeitsstunden im Monat: ",
 		 "stundengesammt2":" von ",
+		 "gesammtstunden":"Gesammtstunden",
 		 "urlaub":"Urlaub",
 		 "aenderungsaved":"Änderung gespeichert.",
 		 "selectaday":"Wähle einen Tag!",
@@ -79,12 +84,17 @@ var sprachen=[
 		 "datgruppe":"Gruppe",
 		 "dattage":"Tage",
 		 "datland":"Land",
+		 "datgeplantestunden":"geplante Stunden",
 		 
 		 "datdat":"Datum",
 		 "datstunden":"Stunden",
 		 "dattyp":"Typ",
 		 "datkommentar":"Kommentar",
 		 "datuser":"Benutzer",
+		 
+		 "version":"Version",
+		 "projektpage":"die Projektpage liegt auf",
+		 "speicherort":"Deine Daten liegen in",
 		 
 		 "wahleprojekt":"Wähle das zu bearbeitende Projekt aus!",
 		 "buttdel":"löschen",
