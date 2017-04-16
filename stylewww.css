@@ -1,3 +1,23 @@
+
+
+.Notizen_56fd0c1dc008b61040e7c027808a587d{
+	background-color: #fafec0;	
+}
+.Notizen_56fd0c1dc008b61040e7c027808a587d .inputArt,
+.Notizen_56fd0c1dc008b61040e7c027808a587d .inputStunden
+{
+	display:none;
+}
+.monatsliste .Notizen_56fd0c1dc008b61040e7c027808a587d .inputKommentar{
+	width: 200px;
+}
+
+
+
+
+
+
+
 /* responsive */
 
 /*
