@@ -34,6 +34,7 @@
 		"user":"<?php echo $_SESSION['userid'];?>"
 	}
 	</script>
+	<link href="php/userstyle.php" rel="stylesheet" type="text/css">
 </head>
 <body class="main">
 <nav>
