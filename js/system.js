@@ -7,11 +7,13 @@ var pro_stunden_app=function(){
 	var scramble=undefined;
 	var geladeneprojekte=undefined;
 	var _appthis=this;
+	var versionsinfos=undefined;
 
 	var loadDataURL="getdata.php";
 	
 	var tabs=[
 		{"id":"tab_editTag" ,"butttitel":"meinTag" ,aktiv:false, d_objekt:undefined}
+		,{"id":"tab_editTodolist","butttitel":"todo",aktiv:false, d_objekt:undefined}
 		,{"id":"tab_editProj","butttitel":"meinProj",aktiv:false, d_objekt:undefined}
 		,{"id":"tab_editUeberblick","butttitel":"ueberblick",aktiv:false, d_objekt:undefined}
 		,{"id":"tab_editEinstellungen","butttitel":"einstellungen",aktiv:false, d_objekt:undefined}
@@ -171,6 +173,13 @@ var pro_stunden_app=function(){
 		return s;
 	}
 	
+	var clearNewDateiname=function(s){
+		s=s.split('.').join('-'); //keine Punkte im Dateinamen
+		s=s.split(',').join('-'); //keine Kommas im Dateinamen
+		s=s.split(' ').join('-');
+		s=s.toLowerCase();					
+		return s;
+	}
 	var convertToDatum=function(s){//String:"YYYY-mm-dd" convert to "dd.mm.jjjj"
 		var ar=s.split('-');
 		if(ar.length==3){
@@ -371,7 +380,9 @@ var pro_stunden_app=function(){
 
 		loadData("getoptionen",parseoptiondata,"GET");
 		
-		var ses=new sessionaliver();
+		versionsinfos=new versionscheck();
+		
+		var ses=new sessionaliver();		
 	}
 	
 	this.Message=function(s,data){
@@ -870,7 +881,10 @@ var pro_stunden_app=function(){
 			jahrdata={min:d.getFullYear(),max:d.getFullYear(),jahre:{}};
 			for(i=0;i<projekte.length;i++){
 				proj=projekte[i];
-				//console.log("#>",proj);
+
+				if(proj!=undefined)
+				if(proj.data!=undefined)
+				if(proj.data.stunden!=undefined)
 				for(t=0;t<proj.data.stunden.length;t++){
 					std=proj.data.stunden[t];
 					jahr=parseInt(std.dat.split("-")[0]);//"2016-12-26"
@@ -890,6 +904,121 @@ var pro_stunden_app=function(){
 		create();
 	}
 	
+	
+	//--Versionscheck--
+	var versionscheck=function(){
+		var url="https://raw.githubusercontent.com/polygontwist/PROSTd-App/master/package.json";
+		var data_versionsinfos={version:"0.0.0"};
+		var _this=this;
+		//-----
+		var ladeSeiteO={
+			url:""
+		};	
+		var letzteAnfrage=undefined;
+		
+		var ladeData=function(url){
+			if(url=="")return;
+			ladeSeiteO.url=url;		
+			
+			if(letzteAnfrage!=undefined){
+				letzteAnfrage.abort();				
+			}
+
+			url=url+"?"+Date.parse(new Date());
+			
+			letzteAnfrage=new Object();
+			letzteAnfrage.url=url;    
+			try {
+				// Mozilla, Opera, Safari sowie Internet Explorer (ab v7)
+				letzteAnfrage.xmlloader = new XMLHttpRequest();			
+				} 
+				catch(e) 
+				{
+					   try {                        
+							 letzteAnfrage.xmlloader  = new ActiveXObject("Microsoft.XMLHTTP");// MS Internet Explorer (ab v6)
+							} catch(e) {
+									try {                                
+											letzteAnfrage.xmlloader  = new ActiveXObject("Msxml2.XMLHTTP");// MS Internet Explorer (ab v5)
+									} catch(e) {
+											letzteAnfrage.xmlloader  = null;
+									}
+							}
+				}	
+				if(!letzteAnfrage.xmlloader){console.log('XMLHttp nicht möglich.');return;}
+				if (letzteAnfrage.overrideMimeType) {
+					letzteAnfrage.overrideMimeType('text/xml');
+					// zu dieser Zeile siehe weiter unten
+				}
+			 
+				letzteAnfrage.load=function(url){	
+					var loader=this.xmlloader;		
+					loader.parserfunc=letzteAnfrage.parseFunc;
+					loader.open('GET',url,true);//open(method, url, async, user, password)
+					loader.responseType='text'; //!                
+					loader.setRequestHeader('Content-Type', 'text/plain'); 
+					loader.setRequestHeader('Cache-Control', 'no-cache'); 
+					
+					loader.onreadystatechange = function(){                
+						if (this.readyState == 4) { 
+							this.parserfunc(this.responseText);
+						}
+					};
+					// loader.timeout=  //ms
+					loader.send(null);
+					return false;
+				}
+			 
+			letzteAnfrage.parseFunc = parseData;    
+			letzteAnfrage.load(url); 
+			
+		}	
+
+		var ladeError=function(xOptions, error){
+			if(error!="abort"){
+				/*var s="<h1 style='color:#f62;'>Entschuldigung ein Fehler ist aufgetreten</h1>";
+				s+="<p>Die Daten ";
+				s+='"'+ladeSeiteO.url+'"';
+				s+=" konnte nicht geladen werden ("+xOptions.status+" "+xOptions.statusText+").</p>";
+				s+="<p>Bitte Informieren Sie Ihren zuständigen Admin oder Kursleiter.</p>";*/
+				console.log("err",xOptions.status,xOptions.statusText);
+			}
+		}
+		
+		var parseData=function(data){	
+			data_versionsinfos=JSON.parse(data);
+			
+			var app=remote.app;
+			if(vergleiche(app.getVersion())){
+				statusDlg.show("",getWort("neueVersion"),"statneueVers");
+			}
+		}		
+		//-----
+		var holeInfos=function(){
+			ladeData(url);
+		}
+		
+		var vergleiche=function(version){
+			if(!isAppBridge())return false;
+			//0.1.15
+			var i,numA=0,numG=0;
+			var aktuell= version.split('.');
+			var aufgit=	data_versionsinfos.version.split('.');
+			console.log(aktuell,aufgit);
+			if(parseInt(aktuell[0])<parseInt(aufgit[0]))return true;
+			if(parseInt(aktuell[1])<parseInt(aufgit[1]))return true;
+			if(parseInt(aktuell[2])<parseInt(aufgit[2]))return true;
+			return false;			
+		}
+		
+		//--API---
+		this.getVersion=function(){return data_versionsinfos.version}
+		
+		this.gibtsneue=function(version){			
+			return vergleiche(version);			
+		}
+		
+		if(isAppBridge())holeInfos();
+	}
 	
 	//--innerfunObjekts--
 	var createTab=function(contentziel,tabbuttziel,data){
@@ -968,6 +1097,20 @@ var pro_stunden_app=function(){
 				inhaltsobjekt.showactions(false);
 				document.title=getWort("meinTag");
 			}
+			
+			if(id=="tab_editTodolist"){
+				//Projekte,TODO-Liste
+				//editorProjekt
+				inhaltsobjekt=new editorTODO(odata.content);
+				odata.inhalte.push(inhaltsobjekt);
+				//div->Projektliste
+				inhaltsobjekt=new Projektliste(odata.content);
+				odata.inhalte.push(inhaltsobjekt);
+				inhaltsobjekt.showactions(true);
+				document.title=getWort("meinProj");
+				
+			}
+			
 			if(id=="tab_editProj"){
 				//Projekte, neu, edit
 				//editorProjekt
@@ -1011,6 +1154,17 @@ var pro_stunden_app=function(){
 			//laden erst nach connect anstoßen!
 			for(i=0;i<odata.inhalte.length;i++){
 				odata.inhalte[i].Message("starttabs");
+			}
+			
+			if(isAppBridge()){
+				var app=remote.app;
+				document.title = document.title+' - PROSTd '+app.getVersion();
+				if(versionsinfos!=undefined)
+				if(versionsinfos.getVersion()!=undefined)
+				{
+					if(versionsinfos.gibtsneue( app.getVersion() ) )
+						document.title +=' ('+versionsinfos.getVersion()+')'
+				}
 			}
 		}
 		
@@ -1312,12 +1466,331 @@ var pro_stunden_app=function(){
 		}
 	}
 	
+	var editorTODO=function(zielnode){
+		/*
+			TODO-Liste von Projekten
+			Projekteigenschaften:
+			.intodo=true //"isended":true
+			.todotext=""
+		*/
+		var ziel=zielnode;
+		var _this=this;
+		var connects=[];
+		var projektaktiv=undefined;
+		var projinputs=[];
+		
+		var todoliste=[];
+		var tab=undefined;
+		var tbody;
+		
+		this.ini=function(){
+			//create
+			basis=cE(ziel,"div",undefined,"editorTODO");
+			basis.innerHTML="";
+			tab=cE(basis,"table");
+		}
+		this.destroy=function(){
+			
+		}
+		this.connect=function(objekt){
+			if(objekt!=undefined)
+				connects.push(objekt);
+			return _this;
+		}
+		
+		this.Message=function(s,data){
+			if(s=="allProjektsloaded"){
+				showTODOdata(data);
+			}
+			if(s=="selectProjekt"){
+				addProjectToTODO(data);
+				sendMSG("deselect",undefined);
+			}
+		}
+		
+		var sendMSG=function(s,data){
+			var i;
+			for(i=0;i<connects.length;i++){
+				connects[i].Message(s,data);
+			}
+		}
+		
+		
+		var sortbynr=function(a,b){
+			var ad=a.data.info.todonr;
+			var bd=b.data.info.todonr;
+			if(ad>bd)
+				return 1;
+			else
+			if(ad==bd)
+				return 0;
+			else
+				return -1;
+		}		
+		
+		var showTODOdata=function(data){
+			var i,o,nummer,
+				liste=data.projekte;
+				
+			basis.innerHTML="";
+			todoliste=[];
+			
+			var gesetztenummern=[];
+			var nummervergeben=function(nr){
+				var i,re=false;
+				for(i=0;i<gesetztenummern.length;i++){
+					if(nr==gesetztenummern[i])re=true;
+				}
+				return re;
+			}
+			
+			for(i=0;i<liste.length;i++){
+				o=liste[i];
+				if(o.data!=undefined)
+				if(o.data.info!=undefined)
+				if(o.data.info.intodo!=undefined){						
+					if(o.data.info.intodo===true){
+						
+						if(o.data.info.todonr==undefined){
+							nummer=todoliste.length;			
+						}else{
+							nummer=o.data.info.todonr;
+						}
+						
+						while(nummervergeben(nummer)){
+							nummer++
+						}
+						o.data.info.todonr=nummer;
+						
+						//anzeigen											
+						todoliste.push(o);
+					}
+				}
+			}
+			
+			todoliste=todoliste.sort(sortbynr);
+			
+			tab=cE(basis,"table");
+			tbody=cE(tab,"tbody");
+			
+			
+			var newnum=false;
+			for(i=0;i<todoliste.length;i++){
+				o=todoliste[i];
+				addItem(o,i);
+				if(o.data.info.todonr!=i){
+					o.data.info.todonr=i;
+					postNewData("projektinfoupdate",{"projektdata": o, "daten": o.data.info,"noreload":true });
+					newnum=true;
+				}
+			}
+			if(newnum){
+				//MESSAGE reloadprojektlist undefined
+				sendMSG("reloadprojektlist",undefined);
+			}
+		}
+		
+		
+		var addProjectToTODO=function(projekt){//von Projektliste übernehmen
+			projekt.data.info.intodo=true;
+			if(projekt.data.info.todotext==undefined){
+				projekt.data.info.todotext="";				
+			}
+			
+			projekt.data.info.todonr=todoliste.length;				
+			
+			
+			addItem(projekt,todoliste.length);
+			todoliste.push(projekt);
+			
+			//save Data
+			//sendMSG("addProjekt",projekt.dat);
+			
+			//console.log("projekt",projekt);
+			postNewData("projektinfoupdate",{"projektdata": projekt, "daten": projekt.data.info });
+		}
+		
+		var addItem=function(projekt,nr){
+			var tr,td,input,saving=false;
+			if(tab==undefined)return;
+			if(projekt.data.info.todotext==undefined){
+				projekt.data.info.todotext="";				
+			}
+			
+			tr=cE(tbody,"tr");
+			
+			td=cE(tr,"td",undefined,"todoNR");
+			td.innerHTML="#"+projekt.data.info.todonr;
+			
+			td=cE(tr,"td");
+			if(nr>0){
+				input=cE(td,"input");
+				input.className="button buttUP";
+				input.type="button";
+				input.value=getWort("butt_up");
+				input.data={"projektdata":projekt};
+				input.addEventListener('click' ,listeUP);
+			}
+		
+			td=cE(tr,"td");
+			if(nr<todoliste.length-1){
+				input=cE(td,"input");
+				input.className="button buttDOWN";
+				input.type="button";
+				input.value=getWort("butt_down");
+				input.data={"projektdata":projekt};
+				input.addEventListener('click' ,listeDOWN);
+			}
+			
+			td=cE(tr,"td");
+			td.innerHTML=projekt.data.titel;
+			
+			td=cE(tr,"td");
+			input=cE(td,"input",undefined,"todoText");
+			input.type="text";
+			input.data={"projektdata":projekt,"node":projekt.data.info.todotext,"timer":undefined};
+			input.value=projekt.data.info.todotext;
+					
+			input.addEventListener('keyup' ,changeTextInput);
+			input.addEventListener('change',changeTextInput);
+			
+			td=cE(tr,"td");
+			input=cE(td,"input");
+			input.className="button buttdel";
+			input.type="button";
+			input.value=getWort("butt_entfernen");
+			input.data={"projektdata":projekt,timer:undefined};
+			input.addEventListener('click' ,delfromlist);
+			
+			
+		}
+		
+		var listeUP=function(e){//console.log(this.data.projektdata.data.info);
+			var projekt=this.data.projektdata;
+			var idat=projekt.data.info;  
+			var nr=idat.todonr;
+			var newnr=nr-1;
+			if(newnr<0){
+				console.log(":-/");
+				return;
+				}
+			
+			var pn=getProjNr(newnr);
+			if(pn!=undefined){
+				pn.data.info.todonr=nr;
+				projekt.data.info.todonr=newnr;
+				//save
+				postNewData("projektinfoupdate",{"projektdata": projekt, "daten": projekt.data.info ,"noreload":true});
+				postNewData("projektinfoupdate",{"projektdata": pn, "daten": pn.data.info });
+			}
+		}
+		var listeDOWN=function(e){//console.log(this.data);
+			var projekt=this.data.projektdata;
+			var idat=projekt.data.info;  
+			var nr=idat.todonr;
+			var newnr=nr+1;
+			
+			var pn=getProjNr(newnr);
+			if(pn!=undefined){
+				pn.data.info.todonr=nr;
+				projekt.data.info.todonr=newnr;
+				//save
+				postNewData("projektinfoupdate",{"projektdata": projekt, "daten": projekt.data.info,"noreload":true });
+				postNewData("projektinfoupdate",{"projektdata": pn, "daten": pn.data.info });
+			}
+		}
+		
+		var getProjNr=function(nr){
+			var i,o;			
+			for(i=0;i<todoliste.length;i++){
+				o=todoliste[i];
+				if(o.data.info.todonr==nr){
+					return o;
+				}
+			}
+			return undefined;
+		}
+		
+		var delfromlist=function(s){
+			this.data.projektdata.data.info.intodo=false;
+			sendtiteldatatimer(this);
+		}
+		
+		var changeTextInput=function(e){//'keyup'/'change'
+			var val=decodeString(this.value);//string
+			
+			//test ob sich der Wert geändert hat (sonst wurde er schon gespeichert)
+			var istanders=!((this.data.node+'')==(val+''));
+			if(e.type=="keyup" && e.keyCode==13)istanders=true;
+			if(!istanders)return;
+			
+			//Timer ggf. löschen
+			if(this.data.timer!=undefined){
+				clearTimeout(this.data.timer);
+				this.data.timer=undefined;
+			}
+			
+			//Daten zuweisen
+			this.data.projektdata.data.info.todotext=this.value;
+			this.data.node=this.value;
+			
+			//neuer Text
+			if(e.type=="keyup" && e.keyCode==13){
+				sendtiteldatatimer(this);				
+			}
+			else{
+				
+				this.data.timer=setTimeout(sendtiteldatatimer,2000,this);//2 sec warten, dann senden, es sei vorher kommen neue daten
+			}
+		}
+		
+		var sendtiteldatatimer=function(node){
+			//console.log(node.data);
+			postNewData("projektinfoupdate",{"projektdata": node.data.projektdata, "daten": node.data.projektdata.data.info });
+		}		
+				
+		
+		var postNewData=function(befehl,data){
+			//"projektinfoupdate", (.projektdata,.daten)
+			//daten			-> projekt.info
+			//projektdata 	-> projekt
+			
+			//console.log("postNewData:",befehl,data);//.typ .data .id
+			var sdata="id="					+data.projektdata.id
+					+"&data="+JSON.stringify(data.daten);
+
+			if(data.noreload!=undefined &&
+				data.noreload===true)
+				loadData(befehl,function(d){},"POST",encodeURI(sdata));//befehl="projektstundenlisteupdate"
+				else
+				loadData(befehl,parseNewdataRE,"POST",encodeURI(sdata));//befehl="projektstundenlisteupdate"
+		};		
+		
+		var parseNewdataRE=function(data){
+			data=JSON.parse(data);
+			//check error
+			if(data.status!=undefined){
+				if(data.status!=msg_OK)
+					handleError(data.status);
+				else{
+					statusDlg.show("",getWort("aenderungsaved"),"statok");
+					if(data.lastaction!=undefined && data.lastaction=="projektinfoupdate")
+						sendMSG("reloadprojektlist",undefined);
+				}
+			}
+			//OK
+		}
+		
+	}
+	
+	
 	var editorProjekt=function(zielnode){
 		var ziel=zielnode;
 		var _this=this;
 		var connects=[];
 		var projektaktiv=undefined;
 		var projinputs=[];
+		var newprojektadded=undefined;
 		
 		this.ini=function(){
 			//create
@@ -1354,6 +1827,23 @@ var pro_stunden_app=function(){
 				//console.log(">>>",s,data);
 				showProjektdata(data.data);
 				sendMSG("deselect",undefined);
+			}
+			if(s=="createnewprojekt"){
+				newprojektadded=data;//ein neues Projekt wurde erzeugt
+			}
+			if(s=="allProjektsloaded"){
+				if(newprojektadded!=undefined){//neues Projekt anzeigen
+					var name=newprojektadded.split("=")[1];
+					var i,p;
+					for(i=0;i<data.projekte.length;i++){
+						p=data.projekte[i];
+						if(p.data.titel==name){
+							showProjektdata(p.data);							
+							return;
+						}
+					}
+					newprojektadded=undefined;
+				}
 			}
 			
 		}
@@ -1423,7 +1913,7 @@ var pro_stunden_app=function(){
 				}
 			for( property in projekt.info ) { 		
 				//console.log(property,"=", projekt.info[property]);
-				tr=cE(tab,"tr",undefined,"infoth");
+				tr=cE(tab,"tr",undefined,"infoth tr"+property);
 				td=cE(tr,"th");
 				td.innerHTML=getWort("dat"+property)+':';//getWort("projtitel")
 				td=cE(tr,"td");
@@ -1797,6 +2287,7 @@ var pro_stunden_app=function(){
 							alert(getWort("mesage_inputnamekurz"));
 						}
 						else{
+							name=clearNewDateiname(name);
 							console.log("create",name);
 							sendMSG("createnewprojekt","newdata="+name);
 						}
@@ -2736,11 +3227,13 @@ var pro_stunden_app=function(){
 				data.dat.stundenproArbeitstag=8;
 				speichern=true;
 			}
+			
+			//app oder web
 			if(typeof(globaldata)!="undefined")
 			if(globaldata.modus!=undefined){
-				if(globaldata.modus=="app"){
-					if(data.dat.windowsize==undefined){
-						data.dat.windowsize={x:0,y:0,width:0,height:0};
+				if(globaldata.modus=="app"){							//wenn app
+					if(data.dat.windowsize==undefined){					//Datenobjekt nicht existent
+						data.dat.windowsize={x:0,y:0,width:0,height:0};	//Datenobjekt erzeugen
 					}
 				}
 			}
@@ -2758,7 +3251,19 @@ var pro_stunden_app=function(){
 				td=cE(tr,"td");
 				td.innerHTML=getWort("version")+':';
 				td=cE(tr,"td");
-				td.innerHTML=app.getVersion();	
+				td.innerHTML=app.getVersion();				
+				
+				console.log(">>>",versionsinfos.getVersion(),app.getVersion())
+				
+				if(versionsinfos!=undefined)
+				if(versionsinfos.getVersion()!=undefined)
+				if(versionsinfos.gibtsneue( app.getVersion() ) ){
+					td.innerHTML+=" (neue Version verfügbar: "+versionsinfos.getVersion()+")";
+				}
+				
+				//todo: check new Version
+				//https://raw.githubusercontent.com/polygontwist/PROSTd-App/master/package.json
+				
 			}
 				tr=cE(tab,"tr");
 				td=cE(tr,"td");
