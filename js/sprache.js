@@ -6,6 +6,7 @@ var sprachen=[
 		 "loading":"lade daten...",
 		 "meinTag":"mein Tag",
 		 "meinProj":"meine Projekte",
+		 "todo":"TODO",
 		 "ueberblick":"Überblick",
 		 "einstellungen":"Einstellungen",
 		 "projekt":"Projekt",
@@ -86,6 +87,10 @@ var sprachen=[
 		 "datland":"Land",
 		 "datgeplantestunden":"geplante Stunden",
 		 
+		 "dattodotext":"TODO-Listentext",
+		 "datintodo":"in TODO-Liste?",
+		 "dattodonr":"TODO-Listenposition",
+		 
 		 "datdat":"Datum",
 		 "datstunden":"Stunden",
 		 "dattyp":"Typ",
@@ -103,14 +108,19 @@ var sprachen=[
 		 "butt_viewpreMon":"zeige",
 		 "butt_viewnexMon":"zeige",
 		 
+		 "butt_entfernen":"von Liste entfernen",
+		 "butt_up":"▲",
+		 "butt_down":"▼",
+		 
 		 "getnewProName":"Wie soll das neue Projekt heißen?",
 		 "mesage_inputnamekurz":"Leider zu kurz, gebe bitte mindestens 3 Zeichen ein!",
 		 "mesage_inputnamenoinput":"Ohne Name kann ich kein neues Projekt anlegen.",
 		 
 		 "datdefaulttyp":"Defaultstundentyp",
 		 "datshowscramblebutt":"Developertoolbutton anzeigen",
-		 "datstundenproArbeitstag":"Stunden pro Arbeitstag"
+		 "datstundenproArbeitstag":"Stunden pro Arbeitstag",
 		 
+		 "neueVersion":"Es gibt eine neue Version :-)"
 		}
 	},
 	{"language":"EN",
