@@ -1,4 +1,5 @@
 <?php 
+	header('Content-type: text/javascript');
 	include "php/basis.php";
 	
 	echo '"use strict";';
