@@ -2,14 +2,14 @@
 <head>
 	<title>ProStd</title>
  
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="content-type" content="text/html, charset=UTF-8" />
 	<meta charset="UTF-8" />
  
 	<!-- IE9  9 edge-->
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
  
 	<!-- iOS -->
-	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
  
 	<link href="style.css" rel="stylesheet" type="text/css">  
 	<link href="stylewww.css" rel="stylesheet" type="text/css">  

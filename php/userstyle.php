@@ -1,4 +1,5 @@
 <?php
+	header('Content-type: text/css');
 	include "basis.php";
 	
 	session_start();
