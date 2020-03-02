@@ -251,7 +251,7 @@
 					//schreiben
 					$string=json_encode($json_a);
 					$string=str_replace("},", "},".chr(10), $string);
-					$string=str_replace(',"', ','.chr(10).'"', $string);
+					//$string=str_replace(',"', ','.chr(10).'"', $string);->fehler! wenn "123,"
 					//$getstatus=str_replace('"', '|', $string);
 					
 					$re=file_put_contents ( $dateipfadname , $string );

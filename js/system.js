@@ -126,7 +126,12 @@ var pro_stunden_app=function(){
 	var getClasses=function(htmlNode){return htmlNode.className;}
 
 	var getDataTyp=function(o){//String:'[object Array]' '[object String]'  '[object Number]' '[object Boolean]'
-			return Object.prototype.toString.call(o); 
+		//"123," ->Fehler!  ->inputKommentar
+		console.log(">>",typeof o,o);
+		if(typeof o =="string")return '[object String]';
+		
+		//if(o.indexOf(',')==o.length-1)o=o+'0';
+		return Object.prototype.toString.call(o); 
 	}
 		
 	var getMonatstage=function(Monat,Jahr){//Monat 1..12
@@ -984,20 +989,26 @@ var pro_stunden_app=function(){
 		}
 		var parseProdata=function(data){
 			var i,o;
-			data=JSON.parse(data);
-			
-			//check error
-			if(data.status!=undefined){
-				if(data.status!=msg_OK){
-					handleError(data.status);
-					return;
-					}
-			};
-			
-			for(i=0;i<projekte.length;i++){//geladene Projektdaten dem Projekt zuordnen
-				o=projekte[i];
-				if(o.id==data.id)o.data=data;			
+			try {
+				data=JSON.parse(data);
+				//check error
+				if(data.status!=undefined){
+					if(data.status!=msg_OK){
+						handleError(data.status);
+						return;
+						}
+				};
+				
+				for(i=0;i<projekte.length;i++){//geladene Projektdaten dem Projekt zuordnen
+					o=projekte[i];
+					if(o.id==data.id)o.data=data;			
+				}
+			} 
+			catch(e) 
+			{
+				console.log("%cparse FEHLER","background-color:red",data);				
 			}
+			
 			getProjektdata();//next
 		}
 		
@@ -3681,23 +3692,27 @@ var pro_stunden_app=function(){
 				o=sortliste[i];
 				o.date=getdatumsObj(o.pro.dat);
 				eintragen=!isinfilter(o);//Filter by Art
-				if(eintragen && jahrfilter!=undefined && jahrfilter!="alle"){
-					if(o.data.stunden==undefined)
-						{
-							console.log("keine Stunden",o);
-						}
-						else
-						eintragen=o.data.stunden.length>0;
-					//gucken ob Stunden passend zum Filter da sind, dann Eintrag zeigen
-					for(t=0;t<o.data.stunden.length;t++){
-						std=o.data.stunden[t];
-						a=parseInt(std.dat.split('-')[0]);
-						if(!isNaN(a)){
-							if(jahrfilter==a)eintragen=true;
-						}
-					}
+				
+				if(o.data==undefined || o.data.stunden==undefined)
+				{
+					console.log("keine Stunden",o);
+					eintragen=false;
 				}
-				if(o.data.stunden.length==0)eintragen=true;
+				else{						
+					if(eintragen && jahrfilter!=undefined && jahrfilter!="alle"){
+						
+						eintragen=o.data.stunden.length>0;
+						//gucken ob Stunden passend zum Filter da sind, dann Eintrag zeigen
+						for(t=0;t<o.data.stunden.length;t++){
+							std=o.data.stunden[t];
+							a=parseInt(std.dat.split('-')[0]);
+							if(!isNaN(a)){
+								if(jahrfilter==a)eintragen=true;
+							}
+						}
+					}						
+					if(o.data.stunden.length==0)eintragen=true;
+				}
 				
 				if(eintragen){
 					if(o.data.info.auftraggeber==undefined)o.data.info.auftraggeber="";
@@ -4154,6 +4169,7 @@ var pro_stunden_app=function(){
 			for(ip=0;ip<projekte.length;ip++){
 				data=projekte[ip].data;
 				//Stunden vorhandener Projekte in Tabelle eintragen
+				if(data!=undefined)				
 				if(data.stunden!=undefined)				
 				for(i=0;i<data.stunden.length;i++){
 					o=data.stunden[i];
@@ -4551,7 +4567,7 @@ var pro_stunden_app=function(){
 		var changeActivityInput=function(e){
 			//console.log(e);
 			//Edit Stundeneintrag
-			var val=this.value;
+			var val=this.value;//"123," ->Fehler!  ->inputKommentar
 			
 			var istanders=!((this.data.datstunde[this.data.nodeid]+'')==(val+''));
 			if(e.type=="keyup" && e.keyCode==13)istanders=true;			
@@ -4560,6 +4576,10 @@ var pro_stunden_app=function(){
 			//'[object Array]' '[object String]'  '[object Number]' 
 			//neu abspeichern, NAch Datentyp wandeln
 			var dtyp=getDataTyp(this.data.datstunde[this.data.nodeid]);
+			
+			if(this.data.typ=="komm")dtyp=== '[String]';
+			
+			
 			if( dtyp=== '[object Array]'){
 				this.data.datstunde[this.data.nodeid]=val.split(',');//in Array wandeln, Trenner ist ein Komma
 			}
