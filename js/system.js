@@ -9,6 +9,7 @@ var pro_stunden_app=function(){
 	var _appthis=this;
 	var versionsinfos=undefined;
 	var optspeichernaktiv=false;
+	var suchfilterbegriff="";
 
 	var loadDataURL="getdata.php";
 	
@@ -36,7 +37,7 @@ var pro_stunden_app=function(){
 				
 		windowsize:{x:0,y:0,width:0,height:0},
 		zeigebeendete:false,
-		settings_projektliste:{sortby:"projekte", updown:"up"}		
+		settings_projektliste:{sortby:"projekte", updown:"up"}	
 	};
 	
 	
@@ -46,12 +47,7 @@ var pro_stunden_app=function(){
 		"urlaub":"rgb(94,156,201)",
 		"feiertage":"rgb(94,156,201)"
 	};
-	
-//TODO:	
-//		-Ausertung: "alle" canvas über alle Jahre
-//				canvas:alle Projekte untereinander?-versch. Farben mit Hint(Projekttitel)
-//		Passwort: new (www)
-	
+		
 	//--"const"--
 	var msg_nouser="404:no user",
 		msg_error_FileNotfound="404:notfound",
@@ -126,11 +122,6 @@ var pro_stunden_app=function(){
 	var getClasses=function(htmlNode){return htmlNode.className;}
 
 	var getDataTyp=function(o){//String:'[object Array]' '[object String]'  '[object Number]' '[object Boolean]'
-		//"123," ->Fehler!  ->inputKommentar
-		console.log(">>",typeof o,o);
-		if(typeof o =="string")return '[object String]';
-		
-		//if(o.indexOf(',')==o.length-1)o=o+'0';
 		return Object.prototype.toString.call(o); 
 	}
 		
@@ -3522,11 +3513,19 @@ var pro_stunden_app=function(){
 		
 		var createNewNamensFilter=function(ziel,table){
 			var inpnode;
+			
+			this.filterInit=function(){
+				if(suchfilterbegriff.length>0){
+					filtern(suchfilterbegriff);
+				}
+			}
+			
 			var ini=function(){
 				var zeile=cE(ziel,"div");
 				
 				inpnode=cE(zeile,"input",undefined,"inp_filternamen");
 				inpnode.type="text";
+				inpnode.value=suchfilterbegriff;
 				inpnode.placeholder=getWort("inp_filternamen");
 				inpnode.addEventListener('keyup',keydownfilter);
 				
@@ -3534,7 +3533,6 @@ var pro_stunden_app=function(){
 				HTMLnode.href="#";
 				HTMLnode.innerHTML=("x");
 				HTMLnode.addEventListener('click',resetclick);
-				
 			}
 			var resetclick=function(e) {
 				inpnode.value="";
@@ -3551,6 +3549,7 @@ var pro_stunden_app=function(){
 			}
 			
 			var filtern=function(filtertext){
+				suchfilterbegriff=filtertext;
 				var tbody=table.getElementsByTagName("tbody")[0];
 				var anzahl=0;
 				filtertext=filtertext.toLowerCase();
@@ -3635,7 +3634,7 @@ var pro_stunden_app=function(){
 			
 			//data-sort
 			var sortliste=data;
-			
+			var filterobj=undefined;
 			var c1="";
 			var c2="";
 			var c3="";
@@ -3670,12 +3669,11 @@ var pro_stunden_app=function(){
 			table=cE(basis,"table");
 			
 			if(optionen.namensfilter===true)
-				new createNewNamensFilter(optionsplane,table);
+				filterobj=new createNewNamensFilter(optionsplane,table);
 			
 			if(optionen.createprojektbutt===true)
 				new createNewProjektButt(optionsplane);
-			
-			
+				
 			//Ergebnis
 			addClass(table,"sortierbar");
 			thead=cE(table,"thead");
@@ -3769,6 +3767,8 @@ var pro_stunden_app=function(){
 			htmlNode=th3.getElementsByTagName('button')[0];
 			htmlNode.addEventListener('click',clicksortButt);
 			htmlNode.id="sort_datum";
+			
+			if(filterobj!=undefined)filterobj.filterInit();
 		}
 		
 		var clicksortButt=function(e){
