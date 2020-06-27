@@ -30,8 +30,10 @@
 	function getPostData($keyname){
 		global $pfaddata;
 		
-		$re=$_POST[$keyname];//FF
+		if (!empty($_POST[$keyname]))$re=$_POST[$keyname];//FF
+		
 		if(empty($re)){//Chrome "request payload"
+			
 			$request_body = file_get_contents('php://input');		//name=projektname&abdatum=1.11.2016
 			if( strpos($request_body,$keyname)>-1 ){
 				$p=strpos($request_body,$keyname);					//name=1234&wert=345
@@ -229,14 +231,16 @@
 						$std=$stundenliste[$i];
 						if($std['dat']===$json_b['dat']){
 							$eintragen=false;
-							if($json_b['deleting']===true){
-								//Element löschen
-								$handlingstatus="deleting";
+							$handlingstatus="change";
+							if (!empty($json_b['deleting'])){
+								if($json_b['deleting']===true){
+									//Element löschen
+									$handlingstatus="deleting";
+								}	
 							}
-							else{
-								$handlingstatus="change";
+							if($handlingstatus=="change"){
 								array_push($newStundenlist,$json_b);
-								}
+							}
 						}
 						else{
 							array_push($newStundenlist,$std);
@@ -523,5 +527,4 @@
 		echo "\"status\":\"ERROR\"";
 		echo "}";
 	}
-	
 ?>

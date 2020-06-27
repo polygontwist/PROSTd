@@ -1,5 +1,5 @@
 <?php
-	$pfaddata="../8080data/";
+	$pfaddata="../prostd_data/";
 	$pfadtemplates="templates/";
 	$pfadJS="js/";
 	$pfadphp="php/";

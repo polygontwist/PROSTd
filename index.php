@@ -4,6 +4,7 @@
  
 	<meta http-equiv="content-type" content="text/html, charset=UTF-8" />
 	<meta charset="UTF-8" />
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
  
 	<!-- IE9  9 edge-->
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -19,13 +20,17 @@
 	include "php/basis.php";
 	
 	$seiteaktiv="login";//default 
+	$sessionuser="";
+	$sessionID="";
 	
 	include "php/logincheck.php";
-	
-	$sessionuser=$_SESSION['userid'];
+	if (!empty($_SESSION['userid']))
+		$sessionuser=$_SESSION['userid'];
 	
 	echo "<!--";
-	echo "SESSION:".($sessionuser==0)." suser=".$sessionuser." stat=".session_status()." sid=".session_id()." sid:".$sessionID."<br>";
+	echo "SESSION:".($sessionuser==0)." suser=".$sessionuser." stat=".session_status();
+	echo " sid=".session_id();
+	echo " sid:".$sessionID." ";
 	echo "go:".$pfadphp.$seiteaktiv.".php<br>";
 	echo "-->";
 	?>

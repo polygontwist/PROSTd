@@ -1,9 +1,23 @@
 <?php
 	if(isset($_POST['username'])){
 		//Logintest
+		$newuser ="0";
+		$basisdateien=[
+			 [
+				"file" =>"urlaub.js",
+				"template"=>'{"id":"urlaub","titel":"Urlaub","info":{"startdatum":"","enddatum":"","tage":26,"gruppe":["theuser"],"auftraggeber":"","farbe":""},"stunden":[]}'
+			 ],
+			 [
+				"file" =>"feiertage.js",
+				"template"=>'{"id":"feiertage","titel":"Feiertage","info":{"land":"DE","farbe":""},"stunden":[]}'
+			 ]
+			];
+		
+		
 		$user = htmlspecialchars($_POST['username']);
 		$pass = $_POST['pass'];
-		$newuser = $_POST['newuser'];
+		if (!empty($_POST['newuser']))
+			$newuser = $_POST['newuser'];
 		$isusertrue=true;
 		
 		
@@ -50,6 +64,20 @@
 						}
 						
 						//chmod($pfaddata.$user, 0777);
+						
+						//basisdateien erzeugen
+						for($i=0;$i<count($basisdateien);$i++){
+							$dateipfad=$pfaddata.$user."/".$basisdateien[$i]["file"];
+							$template=$basisdateien[$i]["template"];
+							$template=str_replace("theuser", $user, $template);
+							
+							if(!$file=fopen($dateipfad,"w",0777)){}
+							else{
+								fwrite($file,$template);
+								fclose($file);
+							}
+						}
+						
 					}
 					
 				}
