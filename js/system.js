@@ -2171,7 +2171,6 @@ var pro_stunden_app=function(){
 							lokalData.wochenarbeitstage[td.data.wochentag]===true
 							)
 							){
-								
 							re.arbeitstage++;
 						}
 						if(td.data["projekte"]!=undefined){
@@ -2182,7 +2181,6 @@ var pro_stunden_app=function(){
 					}
 				}
 			}
-			console.log(re);
 			return re;
 		}
 		
