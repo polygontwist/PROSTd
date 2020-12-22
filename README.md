@@ -2,7 +2,7 @@
 
 Ein kleines Webprojekt um Projektstunden zu erfassen und auszuwerten.
 
-siehe auch: https://github.com/polygontwist/PROSTd-App
+siehe auch: https://github.com/polygontwist/PROSTd-App (Für Versionsinfos, bitte auch dort schaun)
 
 Die Daten werden in einem seperaten Verzeichnis gespeichet, die Einstellung der Verzeichnisse sind in "php\basis.php" zu finden:<br>
 $pfaddata = Pfad zu einem Ordner von die Daten gespeichert werden sollen<br>
