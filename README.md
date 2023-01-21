@@ -41,7 +41,7 @@ Die Daten werden nicht verschlüsselt, nur das Passwort - wer möchte darf hier 
 mit http://electron.atom.io/ siehe https://github.com/polygontwist/PROSTd-App
 
 
-#Projekt exportieren #
+# Projekt exportieren
 
 Im Tab "Meine Projekte" gibt es seit Version 0.1.42 die Option, die Daten als csv zu exportieren. Z.B. für die Weiterverarbeitung in Exel, Calc oder andere.
 Die Trennung der Datenfelder ist mit einem ";" umgesetzt.
