@@ -700,6 +700,7 @@ var pro_stunden_app=function(){
 				strlist[0]=getWort("hallo");
 				h1.innerHTML=strlist.join(' ');
 			}
+			setTabaktiv(tabs[lokalData.tabaktiv].id);
 		}	
 	}
 
@@ -5378,6 +5379,7 @@ var pro_stunden_app=function(){
 			
 			if(this.type=="select-one"){
 				senddatatimer(this);
+				setTabaktiv(tabs[lokalData.tabaktiv].id);
 				return;
 			}
 			
