@@ -42,12 +42,12 @@
 	 <div class="logo">PROSTd</div>
 	 <a href="index.php" class="icon_logout" title="logout"></a>
 	 <?php
-		echo "<h1>Hallo ".$_SESSION['userid']."</h1>";
+		echo "<h1 id='loginout'>Hallo ".$_SESSION['userid']."</h1>";
 	 ?>
 	 <div id="tabnav"></div>
 </nav>
 <?php 
  	include $pfadphp.$seiteaktiv.".php"; 	
-?> 
+?>
 </body>
 </html>

@@ -40,7 +40,7 @@
 <!--<nav class="menue">[LOGIN]</nav>-->
 <?php 
 	include $pfadphp.$seiteaktiv.".php"; 	
-?> 
+?>
 
 </body>
 </html>
