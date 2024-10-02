@@ -43,7 +43,7 @@ mit http://electron.atom.io/ siehe https://github.com/polygontwist/PROSTd-App
 
 # Projekt exportieren
 
-Im Tab "Meine Projekte" gibt es seit Version 0.1.42 die Option, die Daten als csv zu exportieren. Z.B. für die Weiterverarbeitung in Exel, Calc oder andere.
+Im Tab "Meine Projekte" gibt es seit Version 0.1.42 die Option, die Daten als csv zu exportieren. Z.B. für die Weiterverarbeitung in Excel, Calc oder andere.
 Die Trennung der Datenfelder ist mit einem ";" umgesetzt.
 
 <img src="https://github.com/polygontwist/PROSTd-App/blob/master/screenshots/prost0-1-42.png" width="593" alt="Screenshot Übersicht">
